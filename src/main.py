@@ -1,56 +1,12 @@
 from __future__ import absolute_import, annotations
 
+import time
+from datetime import datetime
 from typing import List
 
 import requests
 
-
-class Position:
-
-    def __init__(self, lat: float, lon: float) -> None:
-        self.lat = lat
-        self.lon = lon
-
-
-class Station:
-
-    def __init__(self, station_id: str, name: str, address: str, bikes: int, slots: int, city: str, position: Position):
-        self.id = station_id
-        self.name = name
-        self.address = address
-        self.bikes = bikes
-        self.slots = slots
-        self.city = city
-        self.position = position
-
-    def to_repr(self) -> dict:
-        return {
-            "name": self.name,
-            "id": self.id,
-            "address": self.address,
-            "bikes": self.bikes,
-            "slots": self.slots,
-            "totalSlots": self.bikes + self.slots,
-            "city": self.city,
-            "position": [
-                self.position.lat, self.position.lon
-            ],
-        }
-
-    @staticmethod
-    def from_repr(raw_data: dict, city: str) -> Station:
-        return Station(
-            raw_data["id"],
-            raw_data["name"],
-            raw_data["address"],
-            raw_data["slots"],
-            raw_data["bikes"],
-            city,
-            Position(
-                raw_data["position"][0],
-                raw_data["position"][1]
-            )
-        )
+from station import Station, StationManager
 
 
 def get_stations_for_trento() -> List[Station]:
@@ -73,24 +29,24 @@ def get_stations(url: str, city: str) -> List[Station]:
     resp = requests.get(url)
     stations = resp.json()
 
-    station_list = [Station.from_repr(raw_data, city) for raw_data in stations]
+    station_list = [Station.from_repr(raw_data, city=city, dt=datetime.now()) for raw_data in stations]
 
     return station_list
 
 
-trento_stations = get_stations_for_trento()
-rovereto_stations = get_stations_for_rovereto()
+station_manager = StationManager()
 
-stations = trento_stations + rovereto_stations
+while True:
 
-print(len(stations))
+    trento_stations = get_stations_for_trento()
+    rovereto_stations = get_stations_for_rovereto()
 
-print(len([station for station in stations if station.city == "Trento"]))
-print(len([station for station in stations if station.city == "Rovereto"]))
+    stations = trento_stations + rovereto_stations
 
-print(sum([station.bikes for station in stations]))
-print(sum([station.slots for station in stations]))
+    print(len(stations))
 
-names = [station.name for station in stations]
-slots = [station.slots for station in stations]
-bikes = [station.bikes for station in stations]
+    station_manager.save(stations)
+
+    print("data updated!")
+
+    time.sleep(10)
