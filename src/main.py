@@ -36,6 +36,91 @@ def get_stations(url: str, city: str) -> List[Station]:
 
 station_manager = StationManager()
 
+def get_totalAverage(station: Station) -> None:
+    nb_bikes = 0
+    nb_slots = 0
+    for i in range(len(station)):
+        nb_bikes= nb_bikes + station[i].bikes
+        nb_slots= nb_slots + station[i].slots
+    bikes= nb_bikes/len(station)
+    parking=nb_slots/len(station)
+    print(bikes)
+    print(parking)
+station_manager = StationManager()
+
+trento_stations = get_stations_for_trento()
+rovereto_stations = get_stations_for_rovereto()
+
+stations = trento_stations + rovereto_stations
+get_totalAverage(stations)
+
+def get_totalAverage(station: Station) -> None:
+    nb_bikes = 0
+    nb_slots = 0
+    for i in range(len(station)):
+        nb_bikes= nb_bikes + station[i].bikes
+        nb_slots= nb_slots + station[i].slots
+    bikes= nb_bikes/len(station)
+    parking=nb_slots/len(station)
+    print(bikes)
+    print(parking)
+station_manager = StationManager()
+
+trento_stations = get_stations_for_trento()
+rovereto_stations = get_stations_for_rovereto()
+
+stations = trento_stations + rovereto_stations
+get_totalAverage(stations)
+
+
+def get_totalAveragecity(station: Station, city:str) -> None:
+    nb_bikes = 0
+    nb_slots = 0
+    for i in range(len(station)):
+        if city==stations[i].city:
+            nb_bikes= nb_bikes + station[i].bikes
+            nb_slots= nb_slots + station[i].slots
+    bikes= nb_bikes/len(station)
+    parking=nb_slots/len(station)
+    print(bikes)
+    print(parking)
+station_manager = StationManager()
+
+trento_stations = get_stations_for_trento()
+rovereto_stations = get_stations_for_rovereto()
+
+stations = trento_stations + rovereto_stations
+get_totalAveragecity(stations,"Trento")
+
+def get_totalAveragestation(station: Station,name:str) -> None:
+    nb_bikes = 0
+    nb_slots = 0
+    for i in range(len(station)):
+        if name==stations[i].name:
+            nb_bikes= nb_bikes + station[i].bikes
+            nb_slots= nb_slots + station[i].slots
+    bikes= nb_bikes/len(station)
+    parking=nb_slots/len(station)
+    print(bikes)
+    print(parking)
+station_manager = StationManager()
+
+trento_stations = get_stations_for_trento()
+rovereto_stations = get_stations_for_rovereto()
+
+stations = trento_stations + rovereto_stations
+get_totalAveragestation(stations,"Piazza di Centa")
+
+
+
+
+
+
+
+
+
+"""
+
 while True:
 
     trento_stations = get_stations_for_trento()
@@ -50,3 +135,18 @@ while True:
     print("data updated!")
 
     time.sleep(60)
+
+
+def averagebikeavaialability(database):
+  emptylist=[]
+  for i in range(len(database)):
+    emptylist.append(database[i]["bikes"])
+  return sum(emptylist)/len(emptylist)
+
+def averageslotsavaialability(database):
+  emptylist=[]
+  for i in range(len(database)):
+    emptylist.append(database[i]["slots"])
+  return sum(emptylist)/len(emptylist)
+
+"""
