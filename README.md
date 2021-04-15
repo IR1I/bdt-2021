@@ -20,3 +20,32 @@ The objective of this project is the following:
 * `.gitignore` file: it is the one allowing to list the files (or file patterns) that should not be tracked in the repository (e.g. the Python virtual environment)
 * `requirements.txt` file: for listing the Python libraries that should be installed before running the code
 * `src` folder, that contains all the Python files
+
+## Usage
+
+### Environment
+
+This project requires Python 3.
+
+It can be run by taking advantage of the system Python.
+It can also be run within a Python virtual environment. The following is an example of creation of a virtual environment named _venv3_.
+
+```bash
+python3 -m venv venv3
+```
+
+### Requirements
+
+The libraries defined in the `requirements.txt` file should be installed.
+
+```bash
+pip install -r requirements.tx
+```
+
+### Running the code
+
+In order to run the data collection, do the following:
+
+```bash
+python3 -m main
+```

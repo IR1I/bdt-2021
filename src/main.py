@@ -49,4 +49,4 @@ while True:
 
     print("data updated!")
 
-    time.sleep(10)
+    time.sleep(60)
