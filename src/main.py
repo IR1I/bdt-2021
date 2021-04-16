@@ -7,7 +7,9 @@ from typing import List
 
 import requests
 
-from station import Station, StationManager
+from src.analysis import station_manager
+from station import Station, StationManager, Average
+import pandas as pd
 
 
 def get_stations_for_trento() -> List[Station]:
@@ -35,78 +37,44 @@ def get_stations(url: str, city: str) -> List[Station]:
     return station_list
 
 
-station_manager = StationManager()
-
 def get_totalAverage(file: str) -> None:
-    with open(file, "r") as f:
-        raw_stations = json.load(f)
-        station= [Station.from_repr(raw_station) for raw_station in raw_stations]
+    station = pd.read_json(file)
+    delta= pd.Timedelta(hours=1)
+    stationHour= station[station["timestamp"] > datetime.now()-delta]
+    #print(stationHour["timestamp"])
+    get_Average(stationHour)
+
+def get_Average(station: Station):
     nb_bikes = 0
     nb_slots = 0
-    for i in range(len(station)):
-        nb_bikes= nb_bikes + station[i].bikes
-        nb_slots= nb_slots + station[i].slots
-    bikes= nb_bikes/len(station)
-    parking=nb_slots/len(station)
+    for i in station["bikes"]:
+        nb_bikes = nb_bikes + i
+    for j in station["slots"]:
+        nb_slots = nb_slots + j
+    bikes = nb_bikes / len(station)
+    parking = nb_slots / len(station)
     print(bikes)
     print(parking)
-station_manager = StationManager()
-
-trento_stations = get_stations_for_trento()
-rovereto_stations = get_stations_for_rovereto()
-
-stations = trento_stations + rovereto_stations
-get_totalAverage("stations.json")
 
 
-def get_totalAveragecity(file:str, city:str) -> None:
-    with open(file, "r") as f:
-        raw_stations = json.load(f)
-        station= [Station.from_repr(raw_station) for raw_station in raw_stations]
-    nb_bikes = 0
-    nb_slots = 0
-    for i in range(len(station)):
-        if city==station[i].city:
-            nb_bikes= nb_bikes + station[i].bikes
-            nb_slots= nb_slots + station[i].slots
-    bikes= nb_bikes/len(station)
-    parking=nb_slots/len(station)
-    print(bikes)
-    print(parking)
-station_manager = StationManager()
-
-trento_stations = get_stations_for_trento()
-rovereto_stations = get_stations_for_rovereto()
-
-stations = trento_stations + rovereto_stations
-get_totalAveragecity("stations.json","Trento")
-
-def get_totalAveragestation(file:str,name:str) -> None:
-    with open(file, "r") as f:
-        raw_stations = json.load(f)
-        station= [Station.from_repr(raw_station) for raw_station in raw_stations]
-    nb_bikes = 0
-    nb_slots = 0
-    for i in range(len(station)):
-        if name==station[i].name:
-            nb_bikes= nb_bikes + station[i].bikes
-            nb_slots= nb_slots + station[i].slots
-    bikes= nb_bikes/len(station)
-    parking=nb_slots/len(station)
-    print(bikes)
-    print(parking)
-station_manager = StationManager()
-
-trento_stations = get_stations_for_trento()
-rovereto_stations = get_stations_for_rovereto()
-
-stations = trento_stations + rovereto_stations
-get_totalAveragestation("stations.json","Piazza di Centa")
+def get_totalAverageCity(file: str, city: str):
+    dataframe = pd.read_json(file)
+    stationCity = dataframe[dataframe['city'] == city]
+    delta = pd.Timedelta(hours=1)
+    stationCityHour = stationCity[stationCity["timestamp"] > datetime.now() - delta]
+    get_Average(stationCityHour)
 
 
-"""
+def get_totalAverageStation(file: str, station: str):
+    dataframe = pd.read_json(file)
+    stationStation = dataframe[dataframe['name'] == station]
+    delta = pd.Timedelta(hours=1)
+    stationStationHour = stationStation[stationStation["timestamp"] > datetime.now() - delta]
+    get_Average(stationStationHour)
+
+
+i=0
 while True:
-
     trento_stations = get_stations_for_trento()
     rovereto_stations = get_stations_for_rovereto()
 
@@ -117,6 +85,10 @@ while True:
     station_manager.save(stations)
 
     print("data updated!")
-
+    i = i+1
+    if i==60:
+        get_totalAverage("stations.json")
+        get_totalAverageCity("stations.json", "Trento")
+        get_totalAverageStation("stations.json", "Sacco")
+        i=0
     time.sleep(60)
-"""

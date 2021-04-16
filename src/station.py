@@ -5,6 +5,11 @@ import os
 from datetime import datetime
 from typing import Optional, List
 
+class Average:
+
+    def __init__(self, bikes: float, parking: float) -> None:
+        self.bikes = bikes
+        self.parking = parking
 
 class Position:
 
@@ -91,3 +96,4 @@ class StationManager:
         with open("stations.json", "r") as f:
             raw_stations = json.load(f)
             return [Station.from_repr(raw_station) for raw_station in raw_stations]
+
